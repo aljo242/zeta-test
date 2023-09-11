@@ -15,6 +15,7 @@ import (
 const (
 	// create round a robin list of RPCs to access in case of failure or outage
 	rpcEndpoint      = "wss://bsc-testnet.publicnode.com"
+	syncAPIEndpoint  = "http://0.0.0.0:1317"
 	headerBufferSize = 16
 )
 
