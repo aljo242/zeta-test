@@ -3,7 +3,9 @@ package main
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
+	"log"
 
 	ethcommon "github.com/ethereum/go-ethereum/common"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
@@ -21,23 +23,18 @@ func main() {
 
 	ctx := context.Background()
 
+	log.Printf("connecting to %s\n", rpcEndpoint)
+
 	// create instance of ethclient and assign to cl
 	cl, err := ethclient.Dial(rpcEndpoint)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-
-	peerCount, err := cl.PeerCount(ctx)
-	if err != nil {
-		panic(err)
-	}
-
-	fmt.Println(peerCount)
 
 	heads := make(chan *ethtypes.Header, headerBufferSize)
 	sub, err := cl.SubscribeNewHead(ctx, heads)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 	defer sub.Unsubscribe()
 
@@ -45,31 +42,9 @@ func main() {
 	update := make(chan *ethtypes.Header)
 
 	go func() {
-		var (
-			prevHash    ethcommon.Hash
-			currHash    ethcommon.Hash
-			initialized bool
-		)
-
-		for head := range update {
-			err := head.SanityCheck()
-			if err != nil {
-				panic(err)
-			}
-
-			prevHash = currHash
-			currHash = head.Hash()
-			if !initialized {
-				initialized = true
-				continue
-			}
-
-			if !bytes.Equal(prevHash.Bytes(), head.ParentHash.Bytes()) {
-				panic("hash mismatch")
-			} else {
-				fmt.Println(currHash)
-			}
-
+		err := processHeaders(ctx, update)
+		if err != nil {
+			log.Fatal(err)
 		}
 	}()
 
@@ -84,4 +59,43 @@ func main() {
 			}
 		}
 	}
+}
+
+func processHeaders(ctx context.Context, headers <-chan *ethtypes.Header) error {
+	var (
+		prevHash    ethcommon.Hash
+		currHash    ethcommon.Hash
+		initialized bool
+	)
+
+	for header := range headers {
+		err := header.SanityCheck()
+		if err != nil {
+			return err
+		}
+
+		prevHash = currHash
+		currHash = header.Hash()
+		if !initialized {
+			initialized = true
+			continue
+		}
+
+		if !bytes.Equal(prevHash.Bytes(), header.ParentHash.Bytes()) {
+			return errors.New("hash mismatch")
+		}
+
+		log.Printf("recieved incoming block header with hash %s\n", currHash.String())
+		err = sendMsgAddHeader(ctx, header)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func sendMsgAddHeader(ctx context.Context, header *ethtypes.Header) error {
+	log.Printf("successfully sent MsgAddHeader to sync chain\n")
+	return nil
 }
