@@ -13,7 +13,15 @@ import (
 func TestGenesis(t *testing.T) {
 	genesisState := types.GenesisState{
 		Params: types.DefaultParams(),
-
+		HeaderList: []types.Header{
+			{
+				Id: 0,
+			},
+			{
+				Id: 1,
+			},
+		},
+		HeaderCount: 2,
 		// this line is used by starport scaffolding # genesis/test/state
 	}
 
@@ -25,5 +33,7 @@ func TestGenesis(t *testing.T) {
 	nullify.Fill(&genesisState)
 	nullify.Fill(got)
 
+	require.ElementsMatch(t, genesisState.HeaderList, got.HeaderList)
+	require.Equal(t, genesisState.HeaderCount, got.HeaderCount)
 	// this line is used by starport scaffolding # genesis/test/assert
 }

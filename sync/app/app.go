@@ -524,6 +524,7 @@ func New(
 		keys[syncmoduletypes.StoreKey],
 		keys[syncmoduletypes.MemStoreKey],
 		app.GetSubspace(syncmoduletypes.ModuleName),
+		authtypes.NewModuleAddress(govtypes.ModuleName).String(),
 	)
 	syncModule := syncmodule.NewAppModule(appCodec, app.SyncKeeper, app.AccountKeeper, app.BankKeeper)
 

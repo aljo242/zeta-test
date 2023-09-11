@@ -8,5 +8,5 @@ import (
 
 // x/sync module sentinel errors
 var (
-	ErrSample = sdkerrors.Register(ModuleName, 1100, "sample error")
+	ErrInvalidHash = sdkerrors.Register(ModuleName, 0, "invalid hash")
 )

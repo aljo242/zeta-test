@@ -7,6 +7,10 @@ import (
 
 var _ paramtypes.ParamSet = (*Params)(nil)
 
+const (
+	DefaultAdmin = "cosmos1cqhgr6emu8fdacqyu8wdh5cuqsgmc8rymyy9"
+)
+
 // ParamKeyTable the param key table for launch module
 func ParamKeyTable() paramtypes.KeyTable {
 	return paramtypes.NewKeyTable().RegisterParamSet(&Params{})
@@ -19,7 +23,10 @@ func NewParams() Params {
 
 // DefaultParams returns a default set of parameters
 func DefaultParams() Params {
-	return NewParams()
+	params := NewParams()
+	params.Admin = DefaultAdmin
+
+	return params
 }
 
 // ParamSetPairs get the params.ParamSet

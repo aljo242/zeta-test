@@ -17,3 +17,9 @@ const (
 func KeyPrefix(p string) []byte {
 	return []byte(p)
 }
+
+const (
+	HeaderKey      = "Header/value/"
+	HeaderCountKey = "Header/count/"
+	AdminKey       = "Admin"
+)

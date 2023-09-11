@@ -1,7 +1,56 @@
 syntax = "proto3";
+
 package sync.sync;
 
 option go_package = "sync/x/sync/types";
 
+import "cosmos_proto/cosmos.proto";
+import "cosmos/msg/v1/msg.proto";
+import "sync/sync/header.proto";
+
 // Msg defines the Msg service.
-service Msg {}
+service Msg {
+  rpc CreateHeader (MsgCreateHeader) returns (MsgCreateHeaderResponse);
+  rpc UpdateHeader (MsgUpdateHeader) returns (MsgUpdateHeaderResponse);
+  rpc DeleteHeader (MsgDeleteHeader) returns (MsgDeleteHeaderResponse);
+  rpc Admin        (MsgAdmin       ) returns (MsgAdminResponse       );
+}
+message MsgCreateHeader {
+  option (cosmos.msg.v1.signer) = "admin";
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  bytes parentHash = 2;
+  bytes uncleHash = 3;
+  bytes rootHash = 4;
+  bytes txHash = 5;
+  bytes receiptHash = 6;
+  bytes hash = 7;
+}
+
+message MsgCreateHeaderResponse {
+  uint64 blockID = 1;
+}
+
+message MsgUpdateHeader {
+  option (cosmos.msg.v1.signer) = "admin";
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 blockID    = 2;
+}
+
+message MsgUpdateHeaderResponse {}
+
+message MsgDeleteHeader {
+  option (cosmos.msg.v1.signer) = "admin";
+  string admin = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  uint64 blockID    = 2;
+}
+
+message MsgDeleteHeaderResponse {}
+
+message MsgAdmin {
+  option (cosmos.msg.v1.signer) = "authority";
+  string authority = 1 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+  string admin = 2 [(cosmos_proto.scalar) = "cosmos.AddressString"];
+}
+
+message MsgAdminResponse {}
+
