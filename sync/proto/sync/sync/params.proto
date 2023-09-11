@@ -1,0 +1,12 @@
+syntax = "proto3";
+package sync.sync;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "sync/x/sync/types";
+
+// Params defines the parameters for the module.
+message Params {
+  option (gogoproto.goproto_stringer) = false;
+  
+}

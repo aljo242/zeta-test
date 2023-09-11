@@ -1,0 +1,12 @@
+syntax = "proto3";
+package sync.sync;
+
+import "gogoproto/gogo.proto";
+import "sync/sync/params.proto";
+
+option go_package = "sync/x/sync/types";
+
+// GenesisState defines the sync module's genesis state.
+message GenesisState {
+  Params params = 1 [(gogoproto.nullable) = false];
+}
