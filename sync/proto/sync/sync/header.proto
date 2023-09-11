@@ -1,0 +1,14 @@
+syntax = "proto3";
+package sync.sync;
+
+option go_package = "sync/x/sync/types";
+
+message Header {
+  uint64 BlockID = 1;
+  bytes parentHash = 2;
+  bytes uncleHash = 3;
+  bytes rootHash = 4;
+  bytes txHash = 5;
+  bytes receiptHash = 6;
+  bytes hash = 7;
+}
